@@ -26,7 +26,7 @@ class SNSEndpointTestCase(SNSBaseTest):
 
     def test_non_post_httpnotallowed(self):
         """
-        Test that GET requests to the endpoint return a 
+        Test that GET requests to the endpoint return a
         HttpResponseNotAllowed
         """
         request = self.factory.get('/')
@@ -97,7 +97,7 @@ class SNSEndpointTestCase(SNSBaseTest):
     @patch('django_sns_view.views.confirm_subscription')
     def test_confirm_subscription_called(self, mock):
         """
-        Test that confirm_subscription is called when sns 
+        Test that confirm_subscription is called when sns
         sends a SubscriptionConfirmation notification
         """
         mock.return_value = 'Confirmed'

@@ -44,13 +44,16 @@ class SNSEndpoint(View):
         """
         Validate and handle an SNS message.
         """
+
+        headers = request.META.get('headers', request.META)
+
         # Check the topic if specified by a settings key
         if hasattr(settings, self.topic_settings_key):
-            if self.topic_type_header not in request.META['headers']:
+            if self.topic_type_header not in headers:
                 return HttpResponseBadRequest('No TopicArn Header')
 
             # Check to see if the topic is in the settings
-            if (not request.META['headers'][self.topic_type_header]
+            if (not headers[self.topic_type_header]
                     in getattr(settings, self.topic_settings_key)):
                 return HttpResponseBadRequest('Bad Topic')
 
@@ -85,12 +88,12 @@ class SNSEndpoint(View):
             logger.error('Verification Failure %s', )
             return HttpResponseBadRequest('Improper Signature')
 
-        if self.message_type_header not in request.META['headers']:
+        if self.message_type_header not in headers:
             logger.error(
-                'HTTP_X_AMZ_SNS_MESSAGE_TYPE not found in request.META["headers"]')
+                'HTTP_X_AMZ_SNS_MESSAGE_TYPE not found in headers')
             return HttpResponseBadRequest('HTTP_X_AMZ_SNS_MESSAGE_TYPE not set')
 
-        message_type = request.META['headers'][self.message_type_header]
+        message_type = headers[self.message_type_header]
 
         if message_type not in self.allowed_message_types:
             logger.warning('Notification Type Not Known %s', message_type)
